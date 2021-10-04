@@ -1,0 +1,10 @@
+{
+  "realm": "realm1",
+  "resource": "back",
+  "auth-server-url": "http://localhost:8180/auth",
+  "ssl-required" : "external",
+  "bearer-only": true,
+  "credentials": {
+    "secret": "4264f0ec-5a0f-4e31-9ceb-5674df7e5182"
+  }
+}

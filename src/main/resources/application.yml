@@ -1,0 +1,23 @@
+multitenancy:
+  tenant:
+    default-tenant: public
+    repository:
+      packages: com.example.springboot.jpa.repos
+    entityManager:
+      packages: com.example.springboot.jpa.entities
+spring:
+  autoconfigure:
+    exclude: org.keycloak.adapters.springboot.KeycloakAutoConfiguration
+  datasource:
+    initialization-mode: never
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: test
+    password: test
+    continueOnError: false
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: none
