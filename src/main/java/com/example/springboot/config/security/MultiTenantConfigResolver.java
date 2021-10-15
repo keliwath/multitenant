@@ -1,6 +1,7 @@
 package com.example.springboot.config.security;
 
 import com.example.springboot.config.multitenancy.NoTenantException;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -18,14 +19,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MultiTenantConfigResolver extends KeycloakSpringBootConfigResolver implements KeycloakConfigResolver  {
 
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String TOKEN_PREFIX = "bearer";
+
     private final Map<String, KeycloakDeployment> cache = new ConcurrentHashMap<>();
+
+    @Setter
     private static AdapterConfig adapterConfig;
 
     @Override
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
 
         String realm = request.getHeader("X-TENANT-ID");
+
+
         if (realm == null) {
+            //return null;
             realm = "demo";
         }
 
@@ -45,7 +54,4 @@ public class MultiTenantConfigResolver extends KeycloakSpringBootConfigResolver 
         return deployment;
     }
 
-    public static void setAdapterConfig(AdapterConfig adapterConfig) {
-        MultiTenantConfigResolver.adapterConfig = adapterConfig;
-    }
 }
