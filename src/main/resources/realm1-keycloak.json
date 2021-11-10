@@ -4,6 +4,8 @@
   "auth-server-url": "http://localhost:8180/auth",
   "ssl-required" : "external",
   "bearer-only": true,
+  "verify-token-audience": true,
+  "use-resource-role-mappings": true,
   "credentials": {
     "secret": "4264f0ec-5a0f-4e31-9ceb-5674df7e5182"
   }

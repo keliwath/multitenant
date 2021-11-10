@@ -1,6 +1,9 @@
 package com.example.springboot.config.security;
 
-import com.example.springboot.config.multitenancy.NoTenantException;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.springboot.config.JWTHelper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.KeycloakConfigResolver;
@@ -12,15 +15,15 @@ import org.keycloak.representations.adapters.config.AdapterConfig;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @Slf4j
-public class MultiTenantConfigResolver extends KeycloakSpringBootConfigResolver implements KeycloakConfigResolver  {
+public class MultiTenantConfigResolver extends KeycloakSpringBootConfigResolver implements KeycloakConfigResolver {
 
     public static final String AUTH_HEADER = "Authorization";
-    public static final String TOKEN_PREFIX = "bearer";
 
     private final Map<String, KeycloakDeployment> cache = new ConcurrentHashMap<>();
 
@@ -30,12 +33,17 @@ public class MultiTenantConfigResolver extends KeycloakSpringBootConfigResolver 
     @Override
     public KeycloakDeployment resolve(OIDCHttpFacade.Request request) {
 
-        String realm = request.getHeader("X-TENANT-ID");
+        String realm;
 
-
-        if (realm == null) {
-            //return null;
-            realm = "demo";
+        try {
+            String authHeader = request.getHeader(AUTH_HEADER);
+            if (authHeader == null) {
+                log.warn("No Auth header provided");
+                return emptyDeployment();
+            }
+            realm = JWTHelper.extractRealmFromHeader(authHeader);
+        } catch (ParseException ex) {
+            throw new IllegalStateException("Invalid JWT provided");
         }
 
         log.info("Request from {}", realm);
@@ -53,5 +61,12 @@ public class MultiTenantConfigResolver extends KeycloakSpringBootConfigResolver 
 
         return deployment;
     }
+
+    private KeycloakDeployment emptyDeployment() {
+        KeycloakDeployment kd = new KeycloakDeployment();
+        kd.setBearerOnly(true);
+        return kd;
+    }
+
 
 }

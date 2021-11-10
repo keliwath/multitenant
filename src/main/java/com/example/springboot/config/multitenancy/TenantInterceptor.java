@@ -1,5 +1,6 @@
 package com.example.springboot.config.multitenancy;
 
+import com.example.springboot.config.JWTHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +10,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
 
+import java.text.ParseException;
+
 @Component
 @Slf4j
 public class TenantInterceptor implements WebRequestInterceptor {
 
+    private static final String AUTH_HEADER = "Authorization";
     private final String defaultTenant;
 
     @Autowired
@@ -22,10 +26,11 @@ public class TenantInterceptor implements WebRequestInterceptor {
     }
 
     @Override
-    public void preHandle(WebRequest request) {
+    public void preHandle(WebRequest request) throws ParseException {
         String tenantId;
-        if (request.getHeader("X-TENANT-ID") != null) {
-            tenantId = request.getHeader("X-TENANT-ID");
+        String authHeader = request.getHeader(AUTH_HEADER);
+        if (authHeader != null) {
+            tenantId = JWTHelper.extractRealmFromHeader(authHeader);
         } else if (this.defaultTenant != null) {
             tenantId = this.defaultTenant;
         } else {
