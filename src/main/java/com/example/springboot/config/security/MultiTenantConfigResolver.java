@@ -1,8 +1,5 @@
 package com.example.springboot.config.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.springboot.config.JWTHelper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
