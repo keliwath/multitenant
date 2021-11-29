@@ -4,6 +4,7 @@
   "auth-server-url": "http://localhost:8180/auth",
   "ssl-required" : "external",
   "bearer-only": true,
+  "enable-cors": true,
   "verify-token-audience": true,
   "use-resource-role-mappings": true,
   "credentials": {

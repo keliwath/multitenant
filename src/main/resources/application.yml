@@ -21,3 +21,7 @@ spring:
     properties:
       hibernate:
         ddl-auto: none
+logging:
+  level:
+    org:
+      keycloak: TRACE
